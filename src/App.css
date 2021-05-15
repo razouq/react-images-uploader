@@ -1,0 +1,67 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  /* 10px */
+}
+
+body {
+  box-sizing: border-box;
+}
+
+.images-container {
+  display: flex;
+}
+
+.image-card {
+  height: 200px;
+  width: 200px;
+  position: relative;
+}
+
+.image-card img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.gg-close {
+  cursor: pointer;
+  box-sizing: border-box;
+  position: relative;
+  display: block;
+  position: absolute;
+  transform: scale(var(--ggs,1));
+  width: 22px;
+  height: 22px;
+  border: 2px solid transparent;
+  border-radius: 40px;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+ }
+ 
+ .gg-close::after,
+ .gg-close::before {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: currentColor;
+  transform: rotate(45deg);
+  border-radius: 5px;
+  top: 8px;
+  left: 1px
+ }
+ 
+ .gg-close::after {
+  transform: rotate(-45deg)
+ } 
