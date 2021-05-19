@@ -13,6 +13,18 @@ html {
 
 body {
   box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.wrapper {
+  min-height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 50vw;
 }
 
 .images-container {
@@ -31,13 +43,50 @@ body {
   object-fit: cover;
 }
 
+input[type='file'] {
+  display: none;
+  width: 100%;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+input[type='file'] + label {
+  font-size: 1.5rem;
+  display: inline-block;
+  width: 100%;
+  background-color: green;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+input[type='submit'] {
+  width: 100%;
+  font-size: 1.5rem;;
+  background-color: #4caf50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+p {
+  font-size: 1.5rem;
+}
+
 .gg-close {
   cursor: pointer;
   box-sizing: border-box;
   position: relative;
   display: block;
   position: absolute;
-  transform: scale(var(--ggs,1));
+  transform: scale(var(--ggs, 1));
   width: 22px;
   height: 22px;
   border: 2px solid transparent;
@@ -46,11 +95,11 @@ body {
   right: 1rem;
   z-index: 3;
   color: red;
- }
- 
- .gg-close::after,
- .gg-close::before {
-  content: "";
+}
+
+.gg-close::after,
+.gg-close::before {
+  content: '';
   display: block;
   box-sizing: border-box;
   position: absolute;
@@ -60,9 +109,9 @@ body {
   transform: rotate(45deg);
   border-radius: 5px;
   top: 8px;
-  left: 1px
- }
- 
- .gg-close::after {
-  transform: rotate(-45deg)
- } 
+  left: 1px;
+}
+
+.gg-close::after {
+  transform: rotate(-45deg);
+}
