@@ -5,6 +5,8 @@ import axios from 'axios';
 
 import './App.css';
 
+const CLOUDINARY_UPLOAD_IMAGE_URL = `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_NAME}/image/upload`;
+
 const App = () => {
   const [images, setImages] = useState({});
 
@@ -15,17 +17,20 @@ const App = () => {
 
   const onChange = async e => {
     const newImages = _.mapKeys(e.target.files, () => uuidv4());
+    e.target.value = null;
     setImages(prevImages => ({ ...prevImages, ...newImages }));
 
     const formData = new FormData();
-    console.log('formdata');
-    for (const [imageKey, Image] of Object.entries(newImages)) {
-      formData.append('file', Image);
-      formData.append('upload_preset', 'zjnbccsn');
-      formData.append('public_id', imageKey);
+    formData.append(
+      'upload_preset',
+      process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
+    );
+    for (const [imageId, image] of Object.entries(newImages)) {
+      formData.append('file', image);
+      formData.append('public_id', imageId);
       try {
         const response = await axios.post(
-          `https://api.cloudinary.com/v1_1/db1waj76f/image/upload`,
+          CLOUDINARY_UPLOAD_IMAGE_URL,
           formData,
         );
         console.log(response);
@@ -35,38 +40,45 @@ const App = () => {
     }
   };
 
-  const onRemove = imageKey => {
+  const onRemove = imageId => {
     const nextImages = { ...images };
-    delete nextImages[imageKey];
+    delete nextImages[imageId];
     setImages(nextImages);
   };
+
+  const dumpIds = () => '[' + Object.keys(images).join(', ') + ']';
 
   return (
     <div className='wrapper'>
       <div className='container'>
         <h1>Submit Images Form</h1>
         <form onSubmit={onSubmit} encType='multipart/form-data'>
-          <input name='images' id='images' type='file' multiple onChange={onChange} />
-          <label htmlFor="images">Choose Images</label>
+          <label htmlFor='images'>Choose Images</label>
+          <input
+            name='images'
+            id='images'
+            type='file'
+            multiple
+            onChange={onChange}
+          />
           <div>
             <div className='images-container'>
-              {Object.keys(images).map(ImageKey => (
+              {Object.keys(images).map(imageId => (
                 <div className='image-card'>
                   <img
-                    key={ImageKey}
-                    src={URL.createObjectURL(images[ImageKey])}
+                    key={imageId}
+                    src={URL.createObjectURL(images[imageId])}
                     alt='pic'
                   />
-                  <i
-                    className='gg-close'
-                    onClick={() => onRemove(ImageKey)}
-                  ></i>
+                  <i className='gg-close' onClick={() => onRemove(imageId)}></i>
                 </div>
               ))}
             </div>
           </div>
           <input type='submit' value='submit' />
-          <p>submitted images ids : <br/> {'[' + Object.keys(images).join(', ') + ']'}</p>
+          <p>
+            submitted images ids : <br /> {dumpIds(images)}
+          </p>
         </form>
       </div>
     </div>
