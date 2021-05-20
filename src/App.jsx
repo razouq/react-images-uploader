@@ -64,7 +64,7 @@ const App = () => {
           <div>
             <div className='images-container'>
               {Object.keys(images).map(imageId => (
-                <div className='image-card'>
+                <div className='image-card' key={imageId}>
                   <img
                     key={imageId}
                     src={URL.createObjectURL(images[imageId])}
