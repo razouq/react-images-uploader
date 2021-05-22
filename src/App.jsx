@@ -7,12 +7,35 @@ import './App.css';
 
 const CLOUDINARY_UPLOAD_IMAGE_URL = `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_NAME}/image/upload`;
 
+const sendFiles = async (data) => {
+  const formData = new FormData();
+  formData.append(
+    'upload_preset',
+    process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
+  );
+  for (const [imageId, image] of Object.entries(data)) {
+    formData.append('file', image);
+    formData.append('public_id', imageId);
+    try {
+      const response = await axios.post(
+        CLOUDINARY_UPLOAD_IMAGE_URL,
+        formData,
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err.response);
+    }
+  }
+};
 const App = () => {
   const [images, setImages] = useState({});
 
-  const onSubmit = e => {
+  const onSubmit = async e => {
     e.preventDefault();
-    console.log('submitted images Id', Object.keys(images));
+    console.log(images);
+    await sendFiles(images);
+
+    // console.log('submitted images Id', Object.keys(images));
   };
 
   const onChange = async e => {
@@ -20,24 +43,6 @@ const App = () => {
     e.target.value = null;
     setImages(prevImages => ({ ...prevImages, ...newImages }));
 
-    const formData = new FormData();
-    formData.append(
-      'upload_preset',
-      process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET,
-    );
-    for (const [imageId, image] of Object.entries(newImages)) {
-      formData.append('file', image);
-      formData.append('public_id', imageId);
-      try {
-        const response = await axios.post(
-          CLOUDINARY_UPLOAD_IMAGE_URL,
-          formData,
-        );
-        console.log(response);
-      } catch (err) {
-        console.log(err.response);
-      }
-    }
   };
 
   const onRemove = imageId => {
@@ -75,7 +80,7 @@ const App = () => {
               ))}
             </div>
           </div>
-          <input type='submit' value='submit' />
+          <input type='submit' value='Submit' />
           <p>
             submitted images ids : <br /> {dumpIds(images)}
           </p>
