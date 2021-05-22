@@ -1,7 +1,7 @@
-
-export const extensions = (mimes) => {
-    const authorized = mimes.split(',').map((el) => {
-        return el.trim().split('/')[1].toUpperCase();
+export const mimeType = (extensions = ['*']) => {
+    // @TODO handle other MIME types.
+    const mimes = extensions.map((ext) => {
+        return `image/${ext}`;
     });
-    return authorized.join(', ');
+    return mimes.join(', ');
 }

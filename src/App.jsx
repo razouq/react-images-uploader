@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import {extensions} from './utils';
+import {mimeType} from './utils';
 
 import './App.css';
 
@@ -28,7 +28,7 @@ const sendFiles = async (data) => {
     }
   }
 };
-const FileUpload = ({mimeTypes, ...rest}) => {
+const FileUpload = ({extensions, ...rest}) => {
   const [images, setImages] = useState({});
 
   const onSubmit = async e => {
@@ -52,8 +52,8 @@ const FileUpload = ({mimeTypes, ...rest}) => {
   };
 
   const dumpIds = () => '[' + Object.keys(images).join(', ') + ']';
+  const authorized = extensions ?? ['*'];
 
-  const all = extensions(mimeTypes);
   return (
     <div className='wrapper'>
       <div className='container'>
@@ -63,13 +63,13 @@ const FileUpload = ({mimeTypes, ...rest}) => {
           Choose Images
           </label>
           <span>
-            Accepted extensions are : {all} 
+            Accepted extensions are : {authorized.join(', ')} 
           </span>
           <input
             name='images'
             id='images'
             type='file'
-            accept={mimeTypes}
+            accept={mimeType(extensions)}
             multiple
             onChange={onChange}
           />
