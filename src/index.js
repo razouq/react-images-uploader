@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './App';
+import FileUpload from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <FileUpload mimeTypes={"image/png, image/jpeg, image/gif" } />, 
+    document.getElementById('root'));

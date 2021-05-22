@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import {extensions} from './utils';
 
 import './App.css';
 
@@ -27,14 +28,13 @@ const sendFiles = async (data) => {
     }
   }
 };
-const App = () => {
+const FileUpload = ({mimeTypes, ...rest}) => {
   const [images, setImages] = useState({});
 
   const onSubmit = async e => {
     e.preventDefault();
     console.log(images);
     await sendFiles(images);
-
     // console.log('submitted images Id', Object.keys(images));
   };
 
@@ -53,19 +53,27 @@ const App = () => {
 
   const dumpIds = () => '[' + Object.keys(images).join(', ') + ']';
 
+  const all = extensions(mimeTypes);
   return (
     <div className='wrapper'>
       <div className='container'>
-        <h1>Submit Images Form</h1>
+        <h1>Images Upload Example</h1>
         <form onSubmit={onSubmit} encType='multipart/form-data'>
-          <label htmlFor='images'>Choose Images</label>
+          <label htmlFor='images'>
+          Choose Images
+          </label>
+          <span>
+            Accepted extensions are : {all} 
+          </span>
           <input
             name='images'
             id='images'
             type='file'
+            accept={mimeTypes}
             multiple
             onChange={onChange}
           />
+          
           <div>
             <div className='images-container'>
               {Object.keys(images).map(imageId => (
@@ -82,7 +90,7 @@ const App = () => {
           </div>
           <input type='submit' value='Submit' />
           <p>
-            submitted images ids : <br /> {dumpIds(images)}
+            Submitted images IDs : <br /> {dumpIds(images)}
           </p>
         </form>
       </div>
@@ -90,4 +98,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default FileUpload;
