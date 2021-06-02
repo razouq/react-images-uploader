@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
@@ -6,15 +6,19 @@ import { mimeType } from './utils';
 
 import './App.css';
 
-interface FileUploadProps {
-  extensions: string[];
-}
-
 interface ImagesDictionary {
   [key: string]: Blob;
 }
 
+interface FileUploadProps {
+  extensions: string[];
+  initialImages?: string[];
+}
+
 const CLOUDINARY_UPLOAD_IMAGE_URL = `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_NAME}/image/upload`;
+
+const cloudinaryFetchImage = (id: string) =>
+  `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_NAME}/image/upload/${id}.webp`;
 
 const sendFiles = async (data: ImagesDictionary) => {
   const formData = new FormData();
@@ -27,8 +31,7 @@ const sendFiles = async (data: ImagesDictionary) => {
     formData.append('file', data[imageId]);
     formData.append('public_id', imageId);
     try {
-      const response = await axios.post(CLOUDINARY_UPLOAD_IMAGE_URL, formData);
-      console.log(response);
+      await axios.post(CLOUDINARY_UPLOAD_IMAGE_URL, formData);
     } catch (err) {
       console.log(err.response);
     }
@@ -37,8 +40,34 @@ const sendFiles = async (data: ImagesDictionary) => {
   Promise.all(promises);
 };
 
-const FileUpload = ({ extensions }: FileUploadProps) => {
+const FileUpload = ({ extensions, initialImages = [] }: FileUploadProps) => {
   const [images, setImages] = useState<ImagesDictionary>({});
+
+  useEffect(() => {
+    const fetchInitialImages = () => {
+      const promises = initialImages.map(async (initialImageId) => {
+        try {
+          const response = await axios.get(
+            cloudinaryFetchImage(initialImageId),
+            {
+              responseType: 'blob',
+            },
+          );
+          console.log('test', response.data);
+          setImages((prevImages) => ({
+            ...prevImages,
+            [initialImageId]: response.data,
+          }));
+        } catch (err) {
+          console.log(err.response);
+        }
+      });
+
+      Promise.all(promises);
+    };
+
+    fetchInitialImages();
+  }, []);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -97,6 +126,9 @@ const FileUpload = ({ extensions }: FileUploadProps) => {
                   />
                 </div>
               ))}
+              {/* {initialImages.map((initialImageId) => (
+                <img src={cloudinaryFetchImage(initialImageId)} alt="" />
+              ))} */}
             </div>
           </div>
           <input type="submit" value="Submit" />
@@ -107,6 +139,10 @@ const FileUpload = ({ extensions }: FileUploadProps) => {
       </div>
     </div>
   );
+};
+
+FileUpload.defaultProps = {
+  initialImages: [],
 };
 
 export default FileUpload;
